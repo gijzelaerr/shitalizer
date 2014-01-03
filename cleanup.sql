@@ -9,14 +9,3 @@ UPDATE post SET from_ = 'pp' WHERE LOWER(from_) LIKE '%vries%';
 delete from post where from_ not in ('gijs', 'bas', 'rob', 'guyon', 'rene', 'martin', 'casper', 'pp');
 delete from post where body = '';
 
--- moet beter -- verwijder dubbele message_ids
-delete from post where message_id in (select post.message_id as weg
-FROM post
-LEFT OUTER JOIN (
-   SELECT MIN(id) as RowId, message_id
-   FROM post
-   GROUP BY message_id
-) as KeepRows ON
-   post.id = KeepRows.RowId
-WHERE
-   KeepRows.RowId IS NULL order by post.message_id);
