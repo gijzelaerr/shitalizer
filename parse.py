@@ -12,6 +12,7 @@ box = 'shit.mbox'
 
 shitbox = mailbox.mbox(box)
 
+dup_count = 0
 
 def extract_body(shitmail):
     for part in shitmail.walk():
@@ -28,8 +29,14 @@ def parse(shitmail):
     from_ = shitmail['From']
     subject = shitmail['Subject']
     body = extract_body(shitmail)
-    cleanup_body = EmailReplyParser.parse_reply(body)
+    cleanup_body = EmailReplyParser.parse_reply(body).strip()
     in_reply_to = shitmail['In-Reply-To']
+
+    c = model.session.query(model.Post).filter(model.Post.message_id == message_id).count()
+    if c > 0:
+        logging.error("double message-id: " + message_id)
+        return
+
     post = model.Post(message_id, date, from_, subject, cleanup_body, in_reply_to)
     model.session.add(post)
     model.session.commit()
