@@ -1,1 +1,3 @@
 sqlalchemy==0.9
+email_reply_parser
+psycopg2
